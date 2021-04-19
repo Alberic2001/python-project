@@ -3,7 +3,7 @@
 """
 Created on Sat Apr 10 10:49:46 2021
 
-@author: alberic
+@author: diani
 """
 
 from tkinter import *
@@ -12,7 +12,6 @@ from math import *
 # --------------------------Fonctions de creation d'elements graphiques--------------------------
 
 # Creer un rhomb
-
 
 def create_rhomb(canvas, x, y, raduis=30):
     r1 = canvas.create_polygon(x-raduis, y,
