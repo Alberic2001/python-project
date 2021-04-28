@@ -20,12 +20,12 @@ def create_rhomb(canvas, x, y, raduis=30):
                                x+raduis, y,
                                x, y+raduis,
                                fill="#4389fe")
-    r2 = canvas.create_polygon(x-(raduis-15), y,
+    '''r2 = canvas.create_polygon(x-(raduis-15), y,
                                x, y-(raduis-15),
                                x+(raduis-15), y,
                                x, y+(raduis-15),
-                               fill="#1875d1")
-    return [r1, r2]
+                               fill="#1875d1")'''
+    return r1
 
 
 def create_stick(canvas, debut, end):
@@ -53,7 +53,7 @@ def create_nosh(canvas, x, y, raduis=30):
     return nosh
 
 
-def elementsDictionnary(rhomb_coordinates, trajectory_coordinates, nosh_coordinates, rhombs_id_list):
+def elementsDictionnary(rhomb_coordinates, trajectory_coordinates, nosh_coordinates, rhomb_id):
     "Permet la creation du dictionnaire contenant tous les elements d'un ensemble"
     # rhomb_coordinates represente les coordonnes du centre d'un losange
     # trajectory_coordinates represente la liste des points qui permettront la creation de la trajectoire
@@ -63,13 +63,15 @@ def elementsDictionnary(rhomb_coordinates, trajectory_coordinates, nosh_coordina
         'rhomb': rhomb_coordinates,
         'trajectory': trajectory_coordinates,
         'nosh': nosh_coordinates,
-        'rhomb_id': rhombs_id_list
+        'rhomb_id': rhomb_id
     }
 
 
 def getTrajectory(sets):
     return sets.get("trajectory")
 
+def getRhombTag(sets):
+    return sets.get("rhomb_id")
 
 
 def overlaps(firstSet, secondSet):
@@ -86,26 +88,33 @@ def overlaps(firstSet, secondSet):
 
 def move_rhomb(event):
     global setsLists
-    print(event)
-    move(setsLists[0])
-    print(setsLists[0].get('rhomb'))
+    #print('setsLists: ', setsLists)
+    for sets in setsLists:
+        print('tag: ', sets.get('rhomb_id'), 'clicked tag: ', event.widget.find_withtag("current"))
+        if sets.get('rhomb_id') == event.widget.find_withtag("current")[0]:
+            move(sets)
+            break
+
+
+
 
 
 def move(sets):
     global dx, dy
-    #x, y = sets.get('rhomb')[0], sets.get('rhomb')[1]  # === les coordonés x,y du losange
+    print(sets)
     trajectory = getTrajectory(sets)  # ====liste des trajectoires
     for i in range(len(trajectory)-1):  # on parcour les trajectoires possible
-        print('Boucle ', i, trajectory[i], trajectory[i+1])
+        #print('Boucle ', i, trajectory[i], trajectory[i+1])
         dx,dy=0,0
         x, y = trajectory[i][0], trajectory[i][1]
         mouvement(trajectory[i], trajectory[i+1], x, y)
+        print(trajectory)
         
 
 def mouvement(a, b, x, y):
     global dx, dy
     # on vérifie si xi=xi+1
-    print('mouvement')
+    #print('mouvement')
     
     if a[0] / b[0] == 1:
         # Mvt suivant l'axe des ordonnees, vertical
@@ -126,13 +135,13 @@ def mouvement(a, b, x, y):
             dy = 0
     x = x+(dx*10)
     y = y+(dy*10)
-    can.coords(sets.get('rhomb_id')[0],
+    can.coords(sets.get('rhomb_id'),
                x-RADUIS, y,
                x, y-RADUIS,
                x+RADUIS, y,
                x, y+RADUIS
                )
-    print("x, y = ", x,y)
+    #print("x, y = ", x,y)
     if x != b[0] or y != b[1]:
         fen.after(10, mouvement(a, b, x, y))
 
@@ -140,30 +149,32 @@ def mouvement(a, b, x, y):
 # --------------------------Consts--------------------------
 RADUIS = 30  # Rayon du losange
 dx, dy = 0, 0
+BUTTON1 = '<Button-1>'
 
 fen = Tk()
+fen.title("RHOMB")
 can = Canvas(fen, width=1000, height=800, bg="yellow")
-can.tag_click = True
-can.pack(padx=5, pady=5)
+can.pack()
 
 
 #TEST
-#allTrajectories = getAllTrajectories(setsLists)
-#print(len(allTrajectories), allTrajectories)
-
 '''print(overlaps(
         elementsDictionnary([15,15], [[30,30], [500,30], [500,400], [300,400]], [330, 400], create_rhomb(can, 15,15, RADUIS)),
         elementsDictionnary([400,15], [[400,45], [700,45], [700,145]], [700, 175], create_rhomb(can, 400,15, RADUIS))
     ))
 '''
 setsLists = [
-    elementsDictionnary([400, 100], [[400, 100], [400, 400], [700, 400], [700, 500]], [700, 500], create_rhomb(can, 400, 100, RADUIS))
+    elementsDictionnary([400, 100], [[400, 100], [400, 400], [700, 400], [700, 500]], [700, 500], create_rhomb(can, 400, 100, RADUIS)),
+    elementsDictionnary([120,30], [[120,30], [700,30], [700,300]], [700, 300], create_rhomb(can, 120,30, RADUIS)),
+    #elementsDictionnary([900,400], [[900,400], [400,400], [400,350]], [400, 350], create_rhomb(can, 900,400, RADUIS))
 ]
 for sets in setsLists:
     create_trajectory(can, sets.get('trajectory'))
     create_nosh(can, sets.get('nosh')[0], sets.get('nosh')[1])
-    can.tag_bind(sets.get('rhomb_id')[0], '<Button-1>', move_rhomb)
-    #can.tag_bind(sets.get('rhomb_id')[1], '<Button-1>', move_rhomb)
 
+
+can.tag_bind(setsLists[0].get('rhomb_id'), BUTTON1, move_rhomb)
+can.tag_bind(setsLists[1].get('rhomb_id'), BUTTON1, move_rhomb)
+#can.tag_bind(setsLists[2].get('rhomb_id'), BUTTON1, move_rhomb)
 
 fen.mainloop()
