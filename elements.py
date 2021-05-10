@@ -8,6 +8,7 @@ Created on Sat Apr 10 10:49:46 2021
 
 from tkinter import *
 from math import *
+import sys
 
 # --------------------------Fonctions de creation d'elements graphiques--------------------------
 
@@ -20,11 +21,6 @@ def create_rhomb(canvas, x, y, raduis=30):
                                x+raduis, y,
                                x, y+raduis,
                                fill="#4389fe")
-    '''r2 = canvas.create_polygon(x-(raduis-15), y,
-                               x, y-(raduis-15),
-                               x+(raduis-15), y,
-                               x, y+(raduis-15),
-                               fill="#1875d1")'''
     return r1
 
 
@@ -87,12 +83,13 @@ def overlaps(firstSet, secondSet):
 
 
 def move_rhomb(event):
-    global setsLists
+    global level1, can
     #print('setsLists: ', setsLists)
-    for sets in setsLists:
+    for sets in level1:
         print('tag: ', sets.get('rhomb_id'), 'clicked tag: ', event.widget.find_withtag("current"))
         if sets.get('rhomb_id') == event.widget.find_withtag("current")[0]:
             move(sets)
+            # can.tag_bind(level1[event.widget.find_withtag("current")[0]].get('rhomb_id'), BUTTON1, move_rhomb)
             break
 
 
@@ -107,11 +104,9 @@ def move(sets):
         #print('Boucle ', i, trajectory[i], trajectory[i+1])
         dx,dy=0,0
         x, y = trajectory[i][0], trajectory[i][1]
-        mouvement(trajectory[i], trajectory[i+1], x, y)
-        print(trajectory)
-        
+        mouvement(trajectory[i], trajectory[i+1], x, y, sets)        
 
-def mouvement(a, b, x, y):
+def mouvement(a, b, x, y, sets):
     global dx, dy
     # on vérifie si xi=xi+1
     #print('mouvement')
@@ -133,6 +128,8 @@ def mouvement(a, b, x, y):
         else:
             dx = -1
             dy = 0
+    
+            
     x = x+(dx*10)
     y = y+(dy*10)
     can.coords(sets.get('rhomb_id'),
@@ -143,7 +140,16 @@ def mouvement(a, b, x, y):
                )
     #print("x, y = ", x,y)
     if x != b[0] or y != b[1]:
-        fen.after(10, mouvement(a, b, x, y))
+        fen.after(10, mouvement, a, b, x, y, sets)
+
+def drawlevel(can, level_list):
+    for assembly in level_list:
+        create_trajectory(can, assembly.get('trajectory'))
+        create_nosh(can, assembly.get('nosh')[0], assembly.get('nosh')[1])
+
+
+
+
 
 
 # --------------------------Consts--------------------------
@@ -153,7 +159,7 @@ BUTTON1 = '<Button-1>'
 
 fen = Tk()
 fen.title("RHOMB")
-can = Canvas(fen, width=1000, height=800, bg="yellow")
+can = Canvas(fen, width=1500, height=800, bg="yellow")
 can.pack()
 
 
@@ -163,18 +169,69 @@ can.pack()
         elementsDictionnary([400,15], [[400,45], [700,45], [700,145]], [700, 175], create_rhomb(can, 400,15, RADUIS))
     ))
 '''
-setsLists = [
-    elementsDictionnary([400, 100], [[400, 100], [400, 400], [700, 400], [700, 500]], [700, 500], create_rhomb(can, 400, 100, RADUIS)),
-    elementsDictionnary([120,30], [[120,30], [700,30], [700,300]], [700, 300], create_rhomb(can, 120,30, RADUIS)),
-    #elementsDictionnary([900,400], [[900,400], [400,400], [400,350]], [400, 350], create_rhomb(can, 900,400, RADUIS))
+# setsLists = [
+#     elementsDictionnary([400, 100], [[400, 100], [400, 400], [700, 400], [700, 500]], [700, 500], create_rhomb(can, 400, 100, RADUIS)),
+#     elementsDictionnary([120,30], [[120,30], [700,30], [700,300]], [700, 300], create_rhomb(can, 120,30, RADUIS)),
+#     #elementsDictionnary([900,400], [[900,400], [400,500], [400,350]], [400, 350], create_rhomb(can, 900,400, RADUIS))
+# ]
+
+level1 = [
+    {
+        'rhomb': [250, 250],
+        'trajectory': [[250, 250], [250, 440], [950, 440], [950, 250]],
+        'nosh': [950, 250],
+        'rhomb_id': create_rhomb(can, 250, 250, RADUIS)
+    },
+    {
+        'rhomb': [350, 250],
+        'trajectory': [[350, 250], [350, 400]],
+        'nosh': [350, 400],
+        'rhomb_id': create_rhomb(can, 350, 250, RADUIS)
+    },
+    {
+        'rhomb': [450, 250],
+        'trajectory': [[450, 250], [450, 400]],
+        'nosh': [450, 400],
+        'rhomb_id': create_rhomb(can, 450, 250, RADUIS)
+    },
+    {
+        'rhomb': [550, 250],
+        'trajectory': [[550, 250], [550, 400]],
+        'nosh': [550, 400],
+        'rhomb_id': create_rhomb(can, 550, 250, RADUIS)
+    },
+    {
+        'rhomb': [650, 250],
+        'trajectory': [[650, 250], [650, 400]],
+        'nosh': [650, 400],
+        'rhomb_id': create_rhomb(can, 650, 250, RADUIS)
+    },
+    {
+        'rhomb': [750, 250],
+        'trajectory': [[750, 250], [750, 400]],
+        'nosh': [750, 400],
+        'rhomb_id': create_rhomb(can, 750, 250, RADUIS)
+    },
+    {
+        'rhomb': [850, 250],
+        'trajectory': [[850, 250], [850, 400]],
+        'nosh': [850, 400],
+        'rhomb_id': create_rhomb(can, 850, 250, RADUIS)
+    },
 ]
-for sets in setsLists:
-    create_trajectory(can, sets.get('trajectory'))
-    create_nosh(can, sets.get('nosh')[0], sets.get('nosh')[1])
 
 
-can.tag_bind(setsLists[0].get('rhomb_id'), BUTTON1, move_rhomb)
-can.tag_bind(setsLists[1].get('rhomb_id'), BUTTON1, move_rhomb)
-#can.tag_bind(setsLists[2].get('rhomb_id'), BUTTON1, move_rhomb)
+drawlevel(can, level1)
+
+# can.tag_bind(setsLists[0].get('rhomb_id'), BUTTON1, move_rhomb)
+# can.tag_bind(setsLists[1].get('rhomb_id'), BUTTON1, move_rhomb)
+# can.tag_bind(setsLists[2].get('rhomb_id'), BUTTON1, move_rhomb)
+
+can.tag_bind(level1[0].get('rhomb_id'), BUTTON1, move_rhomb)
+can.tag_bind(level1[1].get('rhomb_id'), BUTTON1, move_rhomb)
+can.tag_bind(level1[2].get('rhomb_id'), BUTTON1, move_rhomb)
+can.tag_bind(level1[3].get('rhomb_id'), BUTTON1, move_rhomb)
+can.tag_bind(level1[4].get('rhomb_id'), BUTTON1, move_rhomb)
+can.tag_bind(level1[5].get('rhomb_id'), BUTTON1, move_rhomb)
 
 fen.mainloop()
