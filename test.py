@@ -173,7 +173,102 @@ def mouvement(a, b, x, y, sets):
             fen.after(30, mouvement, a, b, x, y, sets)
     else: 
         return False
+
+
+
+
+
+
+
+
+
+def move_solver(sets):
+    global dx, dy
+    dic = sets
+    #print(sets)
+    trajectory = getTrajectory(dic)  # ====liste des trajectoires
+    for i in range(len(trajectory)-1):  # on parcourt les trajectoires possible
+        dx,dy=0,0
+        #print("Boucle ",i)
+        x, y = trajectory[i]
+        #print(x,y)
+        return mouvement_solver(trajectory[i], trajectory[i+1], x, y, dic)
         
+
+def mouvement_solver(a, b, x, y, sets):
+    global dx, dy, setsLists
+    #print("point, x, y = ", b, x,y)
+    if a[0] / b[0] == 1:
+        # Mvt suivant l'axe des ordonnees, vertical
+        if y <= b[1]:
+            dx,dy = 0,1
+        else:
+            dx,dy = 0,-1
+
+    if a[1] / b[1] == 1:
+        # Mvt suivant l'axe des abcisses, horizontal
+        if x <= b[0]:
+            dx,dy = 1,0
+        else:
+            dx,dy = -1,0
+    if a[0] / b[0] != 1 and a[1] / b[1] != 1:
+        if y <= b[1]:
+            dx,dy = 0,1
+        else:
+            dx,dy = 0,-1
+    
+    x = x+(dx*10)
+    y = y+(dy*10)
+    sets.update({'rhomb': [x, y]})
+    
+    if global_overlaps(sets, setsLists) != True:    
+        if x != b[0] or y != b[1]:
+            #print(1)
+            mouvement_solver(a, b, x, y, sets)
+            return sets
+    else: 
+        return False
+
+
+
+
+
+
+
+
+#SOLVER
+def all_solutions(level):
+    solutions = []
+    for i in range(len(level)-1):
+        solutions.append(solver(level))
+    return solutions
+
+def solver(level):
+    S, N = [], []
+    solution = resolve(level, S, N)
+    # if len(solution) == len(level):
+    return solution
+    # else:
+    #     return False
+
+
+def resolve(level, S, N):
+    print("resolve test")
+    for i in range(len(level)):
+        if move_solver(level[i]) != False:
+            S.append(level[i])
+        else:
+            N.append(level[i])
+
+    if N != []:
+        NN = N
+        S = N
+        resolve(N, S, NN)
+    else:
+        return S
+
+
+
 
 # --------------------------Consts--------------------------
 RADUIS = 30  # Rayon du losange
@@ -195,12 +290,14 @@ can.pack()
 setsLists = [
     elementsDictionnary([400, 100], [[400, 100], [400, 400], [700, 400], [700, 500]], [700, 500], create_rhomb(can, 400, 100, RADUIS)),
     elementsDictionnary([600, 100], [[600, 100], [600, 380]], [600, 380], create_rhomb(can, 600, 100, RADUIS)),
-    elementsDictionnary([750, 700], [[750, 700], [750, 200]], [750, 300], create_rhomb(can, 750, 700, RADUIS)),
+    elementsDictionnary([750, 700], [[750, 700], [750, 200]], [750, 200], create_rhomb(can, 750, 700, RADUIS)),
 ]
 for sets in setsLists:
     create_trajectory(can, sets.get('trajectory'))
     create_nosh(can, sets.get('nosh')[0], sets.get('nosh')[1])
 
+solutions = all_solutions(setsLists)
+print("Solver solutions = ", solutions)
 
 can.tag_bind(setsLists[0].get('rhomb_id'), BUTTON1, move_rhomb)
 can.tag_bind(setsLists[1].get('rhomb_id'), BUTTON1, move_rhomb)

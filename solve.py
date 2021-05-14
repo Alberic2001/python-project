@@ -1,30 +1,37 @@
-from tkinter import *
-import sys
-import test
+import tkinter, movement, vect
+
+def move_solver(sets, setsLists):
+    global dx, dy
+    #dic = sets
+    #print(sets)
+    trajectory = movement.getTrajectory(sets)  # ====liste des trajectoires
+    for i in range(len(trajectory)-1):  # on parcourt les trajectoires possible
+        dx,dy=0,0
+        #print("Boucle ",i)
+        x, y = trajectory[i]
+        #print(x,y)
+        return mouvement_solver(trajectory[i], trajectory[i+1], x, y, sets, setsLists)
+        #mouvement_solver(trajectory[i], trajectory[i+1], x, y, sets, setsLists)
 
 
-# Le solveur de rhomb
-# Nous utiliserons la methode backtracking
-# Comment cela se passe t-il ?
-# un level du jeu est represente par une liste de dictionnaires
-# Les dictionnaires contiennent nos ensembles pion-trajectoire-encoche-tagDuPion
-# un pion est represente par un liste de ses coordonnees, idem pour les encoches
-# la trajectoire est representee par une liste de liste de toutes les coordonnees des
-# points ou un pion change de trajectoire lors d un mouvement
-# Avec cette grande liste de dictionnaires, on recupere les tags de nos pions et on les 
-# regroupe dans une liste propre T par exemple
-# On cree une nouvelle liste S qui sera notre liste de solution contenant les tags dans
-# l ordre de clic
-# Pour chaque element de la liste T on verifie si a un moment du delacement du pion elle
-# heurte un autre pion de la liste avec la methode overlaps deja definie
-# Si ce n'est pas le cas on ajoute ce tag dans la liste des solutions S
-# Si c'est le cas on arrete le parcours et on passe a un autre pion de la liste T
-# Et on reprend le meme procede de maniere recursive
+def mouvement_solver(a, b, x, y, sets, setsLists):
+    global dx, dy
+    #print("point, x, y = ", b, x,y)
+    dx, dy = movement.direction(a, b, x, y)
+    x = x+(dx*10)
+    y = y+(dy*10)
+    #sets.update({'rhomb': [x, y]})    
+    if movement.global_overlaps(sets, setsLists) != True:    
+        if x != b[0] or y != b[1]:
+            #print(1)
+            sets.update({'rhomb': [x, y]})
+            mouvement_solver(a, b, x, y, sets, setsLists)
+            return True
+    else: 
+        return False
 
-# T = liste de tous les tags des pions du level
-# level = liste de tous les dictionnaires du level
-# N = liste des pions qui en chevauchent d'autres
 
+#SOLVER
 def all_solutions(level):
     solutions = []
     for i in range(len(level)-1):
@@ -34,16 +41,16 @@ def all_solutions(level):
 def solver(level):
     S, N = [], []
     solution = resolve(level, S, N)
-    if len(solution) == len(level):
-        return solution
-    else:
-        return False
+    # if len(solution) == len(level):
+    return solution
+    # else:
+    #     return False
 
 
 def resolve(level, S, N):
     print("resolve test")
-    for i in range(len(level)-1):
-        if test.move(level[i]) == None:
+    for i in range(len(level)):
+        if move_solver(level[i], level) != False:
             S.append(level[i])
         else:
             N.append(level[i])
@@ -56,55 +63,62 @@ def resolve(level, S, N):
         return S
 
 
-solutions = all_solutions(test.setsLists)
-print(solutions)
 
-# erreur => provient du fait que le solver est appele avant la creation des pions
+# Autre essai de solver
+def getDic(tag, level):
+    for i in level:
+        if i.get('rhomb_id') == tag:
+            return i
+
+def getAllTags(level):
+    T = []
+    for i in level:
+        T.append(i.get('rhomb_id'))
+    return T
+
+def turnIntoGraph(level):
+    G = [[]]
+    T = getAllTags(level)
+    for i in level:
+        G.append(T)
+    print(G)
+    return G
 
 
-
-
-# solver definie de maniere recursive (pas totalement )        
-# def solver(level, tag):
-#     # Initialisation de la liste de la solution
-#     S = []
-#     resolve(level, tag, S)
+def resolve(G, i, Visite, ordreVisite, level):
+    ordreVisite.append(i)
+    print("Début du parcours du sommet ",i)
+    print("Etat du vecteur de visite ",Visite)
+    print("Ordre de visite", ordreVisite)
     
-
-# def resolve(level, tag, S):
-#     isSolvable = True
-#     print(S)
-#     if tag < len(level):
-#         dic = level[tag]
-#         if dic not in S:
-#             if test.move(dic) == None:
-#                 S.append(dic)
-#                 # print("Appel recursif")
-#                 resolve(level, tag+1, S)
-#             else:
-#                 resolve(level, tag+1, S)
-#     return isSolvable
+    Visite[i]=1
+    for j in G[i]:
+        if Visite[j]==0:
+            #print("Appel récursif  ",j)
+            if move_solver(level[i-1], level) == True:
+                resolve(G,j,Visite,ordreVisite,level)
+        else:
+            print("Revisite du pion ",j)
+    print("Fin du parcours de ", i)
 
 
+def solver(G, level):
+    #initialisation du vecteur de visite
+    Visite=vect.initVect(len(G),0)  
+    ordreVisite=[]
+    for i in range(1,len(G)):
+        print("bla bla ", G[i], i)
+        #if Visite[i]==0:
+        newOrdre=[]
+        resolve(G,i,Visite,newOrdre,level)
+        ordreVisite.append(newOrdre)
+        print("Ordre de visite solver = ",ordreVisite)
+        Visite=vect.initVect(len(G),0)
+    return ordreVisite
 
 
+def solution(level):
+    # G = turnIntoGraph(level)
+    # print("G = ",G )
+    return solver([[], [2, 3], [1, 3], [1, 2]], level)
 
-
-
-
-
-
-
-
-
-
-
-
-
-# for i in range(len(T)-1)
-# if level[i-1] not in S:
-#             if test.move(level[i-1]) == None:
-#                 S.append(level[i-1])
-#             else:
-#                 if tag < len(T):
-#                     isSolvable = solve(T, level, tag+1) and isSolvable

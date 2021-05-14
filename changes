@@ -1,0 +1,6 @@
+Ajout du solver dans le fichier solve (ne marche pas)
+Separation du code en petits fichiers 
+Elements pour les elements visuels du canevas
+consts pour les constantes du jeu
+movement pour tous le gestionnaire de mouvement 
+app qui est le point d'entree du jeu
