@@ -27,6 +27,9 @@ def global_overlaps(sets, level):
                 break
     return isOverlaping
 
+def clic(event):
+    return event.widget.find_withtag("current")[0]
+
 
 def move_rhomb(event, setsLists):
     for sets in setsLists:
@@ -37,9 +40,8 @@ def move_rhomb(event, setsLists):
 def move(sets, setsLists):
     global dx, dy
     dic = sets
-    #print(sets)
-    trajectory = getTrajectory(dic)  # ====liste des trajectoires
-    for i in range(len(trajectory)-1):  # on parcourt les trajectoires possible
+    trajectory = getTrajectory(dic)
+    for i in range(len(trajectory)-1):
         dx,dy=0,0
         #print("Boucle ",i)
         x, y = trajectory[i]
@@ -50,23 +52,18 @@ def move(sets, setsLists):
 
 def mouvement(a, b, x, y, sets, setsLists):
     global dx, dy
-    #print("point, x, y = ", b, x,y)
     dx, dy = direction(a, b, x, y)
-
     x = x+(dx*10)
     y = y+(dy*10)
     sets.update({'rhomb': [x, y]})
-    #print(sets.get('rhomb'))
     consts.can.coords(sets.get('rhomb_id'),
             x-consts.RADUIS, y,
             x, y-consts.RADUIS,
             x+consts.RADUIS, y,
             x, y+consts.RADUIS
             )
-        #print(2)
     if global_overlaps(sets, setsLists) != True:    
         if x != b[0] or y != b[1]:
-            #print(1)
             consts.fen.after(30, mouvement, a, b, x, y, sets, setsLists)
     else: 
         return False
@@ -75,21 +72,25 @@ def mouvement(a, b, x, y, sets, setsLists):
 def direction(a, b, x, y):
     dx, dy = 0, 0
     if a[0] / b[0] == 1:
-        # Mvt suivant l'axe des ordonnees, vertical
         if y <= b[1]:
             dx,dy = 0,1
         else:
             dx,dy = 0,-1
 
     if a[1] / b[1] == 1:
-        # Mvt suivant l'axe des abcisses, horizontal
         if x <= b[0]:
             dx,dy = 1,0
         else:
             dx,dy = -1,0
     if a[0] / b[0] != 1 and a[1] / b[1] != 1:
-        if y <= b[1]:
-            dx,dy = 0,1
+        if a[0] < b[0]:
+            if a[1] < b[1]:
+                dx, dy = 1, 1
+            else:
+                dx, dy = 1, -1
         else:
-            dx,dy = 0,-1
+            if a[1] < b[1]:
+                dx, dy = -1, 1
+            else:
+                dx, dy = -1, -1
     return dx, dy

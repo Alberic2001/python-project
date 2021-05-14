@@ -2,8 +2,8 @@ import tkinter, movement, vect
 
 def move_solver(sets, setsLists):
     global dx, dy
-    #dic = sets
-    #print(sets)
+    setscoords = sets.get('rhomb')
+    # print(sets)
     trajectory = movement.getTrajectory(sets)  # ====liste des trajectoires
     for i in range(len(trajectory)-1):  # on parcourt les trajectoires possible
         dx,dy=0,0
@@ -11,8 +11,9 @@ def move_solver(sets, setsLists):
         x, y = trajectory[i]
         #print(x,y)
         return mouvement_solver(trajectory[i], trajectory[i+1], x, y, sets, setsLists)
-        #mouvement_solver(trajectory[i], trajectory[i+1], x, y, sets, setsLists)
-
+    # sets.sets.update({'rhomb': setscoords})
+    # print(sets)
+    # return
 
 def mouvement_solver(a, b, x, y, sets, setsLists):
     global dx, dy
@@ -87,16 +88,18 @@ def turnIntoGraph(level):
 
 def resolve(G, i, Visite, ordreVisite, level):
     ordreVisite.append(i)
-    print("Début du parcours du sommet ",i)
-    print("Etat du vecteur de visite ",Visite)
-    print("Ordre de visite", ordreVisite)
-    
     Visite[i]=1
+    print("Début du parcours du sommet =>",i," Etat du vecteur de visite =>",Visite, " Ordre de visite =>", ordreVisite)
     for j in G[i]:
         if Visite[j]==0:
-            #print("Appel récursif  ",j)
             if move_solver(level[i-1], level) == True:
+                #print(move_solver(level[i-1], level))
+                #ordreVisite.append(i)
                 resolve(G,j,Visite,ordreVisite,level)
+            else:
+                ordreVisite.pop(ordreVisite.index(i))
+                Visite[i]=0
+                level[i-1].update({'rhomb': level[i-1].getTrajectory()[0]})
         else:
             print("Revisite du pion ",j)
     print("Fin du parcours de ", i)
@@ -118,7 +121,7 @@ def solver(G, level):
 
 
 def solution(level):
-    # G = turnIntoGraph(level)
-    # print("G = ",G )
-    return solver([[], [2, 3], [1, 3], [1, 2]], level)
+    G = turnIntoGraph(level)
+    print("G = ",G )
+    return solver(G, level)
 

@@ -1,4 +1,4 @@
-import tkinter, elements, app, random, consts
+import tkinter, elements, random, consts
 
 def number_pawn(listeGene):
     return len(listeGene)+1
@@ -6,8 +6,8 @@ def number_pawn(listeGene):
 
 def pawn_position():
     positionPion=[]
-    positionPion.append(random.randint(200, 800))
-    positionPion.append(random.randint(200, 600))
+    positionPion.append(10*random.randint(20, 80))
+    positionPion.append(10*random.randint(20, 60))
     return positionPion
 
 def number_break():
@@ -28,11 +28,11 @@ def two_break(pI, pF):
     L=[]
     c=random.choice(choix)
     if c==1:
-        L.append(random.randint(200, 800))
+        L.append(10*random.randint(20, 80))
         L.append(pF[1])
     else:
         L.append(pF[0])
-        L.append(random.randint(200, 600))
+        L.append(10*random.randint(20, 60))
     L1=one_break(pI, L)
     trajectory=[L1,L]
     return trajectory
@@ -42,11 +42,11 @@ def three_break(pI, pF):
     L=[]
     c=random.choice(choix)
     if c==1:
-        L.append(random.randint(200, 800))
+        L.append(10*random.randint(20, 80))
         L.append(pF[1])
     else:
         L.append(pF[0])
-        L.append(random.randint(200, 600))
+        L.append(10*random.randint(20, 60))
     L1=two_break(pI, L)
     trajectory=L1.append(L)
     return trajectory
@@ -57,11 +57,11 @@ def create_trajectory(pI, pF):
     nb_courbure=number_break()
     trajectory=[pI]
     if nb_courbure==1:
-        trajectory=+one_break(pI, pF)
+        trajectory+=one_break(pI, pF)
     elif nb_courbure==2:
-        trajectory=+two_break(pI, pF)
+        trajectory+=two_break(pI, pF)
     elif nb_courbure==3:
-        trajectory=+three_break(pI, pF)
+        trajectory+=three_break(pI, pF)
     trajectory.append(pF)
     return trajectory
 
