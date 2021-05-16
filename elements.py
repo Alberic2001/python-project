@@ -1,4 +1,5 @@
-import tkinter
+import tkinter, consts
+from tkinter.constants import ALL
 
 def create_rhomb(canvas, x, y, raduis=30):
     r1 = canvas.create_polygon(x-raduis, y,
@@ -60,3 +61,21 @@ def elementsDictionnary(rhomb_coordinates, trajectory_coordinates, nosh_coordina
         'nosh': nosh_coordinates,
         'rhomb_id': rhomb_id
     }
+
+def drawlevel(level):
+    consts.can.delete(ALL)
+    for sets in level:
+        sets.update({"rhomb_id": create_rhomb(consts.can, sets.get('rhomb')[0], sets.get('rhomb')[1])})
+    for sets in level:
+        create_trajectory(consts.can, sets.get('trajectory'))
+        create_nosh(consts.can, sets.get('nosh')[0], sets.get('nosh')[1])
+
+def refreshlevel(level):
+    for sets in level:
+        x, y = sets.get('rhomb')
+        consts.can.coords(sets.get('rhomb_id'),
+                x-consts.RADUIS, y,
+                x, y-consts.RADUIS,
+                x+consts.RADUIS, y,
+                x, y+consts.RADUIS
+                )

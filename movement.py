@@ -1,4 +1,4 @@
-import tkinter, consts
+import tkinter, consts, elements
 
 def getTrajectory(sets):
     return sets.get("trajectory")
@@ -27,9 +27,6 @@ def global_overlaps(sets, level):
                 break
     return isOverlaping
 
-def clic(event):
-    return event.widget.find_withtag("current")[0]
-
 
 def move_rhomb(event, setsLists):
     for sets in setsLists:
@@ -40,33 +37,40 @@ def move_rhomb(event, setsLists):
 def move(sets, setsLists):
     global dx, dy
     dic = sets
-    trajectory = getTrajectory(dic)
-    for i in range(len(trajectory)-1):
+    #print(sets)
+    trajectory = getTrajectory(dic)  # ====liste des trajectoires
+    for i in range(0, len(trajectory)-1):  # on parcourt les trajectoires possible
         dx,dy=0,0
         #print("Boucle ",i)
         x, y = trajectory[i]
         #print(x,y)
-        print(dic.get('rhomb'))
-        print(mouvement(trajectory[i], trajectory[i+1], x, y, dic, setsLists))
+        print(dic.get('rhomb'), x,y)
+        mouvement(trajectory[i], trajectory[i+1], x, y, dic, setsLists)
         
 
 def mouvement(a, b, x, y, sets, setsLists):
     global dx, dy
+    #print("point, x, y = ", b, x,y)
     dx, dy = direction(a, b, x, y)
+
     x = x+(dx*10)
     y = y+(dy*10)
-    sets.update({'rhomb': [x, y]})
-    consts.can.coords(sets.get('rhomb_id'),
+    if global_overlaps(sets, setsLists) != True:
+        sets.update({'rhomb': [x, y]})
+        print(sets)
+        consts.can.coords(sets.get('rhomb_id'),
             x-consts.RADUIS, y,
             x, y-consts.RADUIS,
             x+consts.RADUIS, y,
             x, y+consts.RADUIS
             )
-    if global_overlaps(sets, setsLists) != True:    
         if x != b[0] or y != b[1]:
-            consts.fen.after(30, mouvement, a, b, x, y, sets, setsLists)
-    else: 
+            #print(1)
+            consts.fen.after(30, mouvement(a, b, x, y, sets, setsLists))
+    else:
+        #elements.drawlevel(setsLists)
         return False
+
 
 
 def direction(a, b, x, y):
