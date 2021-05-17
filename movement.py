@@ -1,4 +1,4 @@
-import tkinter, consts, elements
+import tkinter, consts, elements, copy
 
 def getTrajectory(sets):
     return sets.get("trajectory")
@@ -29,30 +29,26 @@ def global_overlaps(sets, level):
 
 
 def move_rhomb(event, setsLists):
-    for sets in setsLists:
+    level = list(setsLists)
+    for sets in level:
         if sets.get('rhomb_id') == event.widget.find_withtag("current")[0]:
-            move(sets, setsLists)
+            move(sets, level)
             break
 
+
 def move(sets, setsLists):
-    global dx, dy
-    dic = sets
-    #print(sets)
-    trajectory = getTrajectory(dic)  # ====liste des trajectoires
+    trajectory = getTrajectory(sets)  # ====liste des trajectoires
     for i in range(0, len(trajectory)-1):  # on parcourt les trajectoires possible
         dx,dy=0,0
-        #print("Boucle ",i)
         x, y = trajectory[i]
-        #print(x,y)
-        print(dic.get('rhomb'), x,y)
-        mouvement(trajectory[i], trajectory[i+1], x, y, dic, setsLists)
+        #print(sets.get('rhomb'), x,y)
+        mouvement(trajectory[i], trajectory[i+1], x, y, sets, setsLists)
         
 
 def mouvement(a, b, x, y, sets, setsLists):
     global dx, dy
-    #print("point, x, y = ", b, x,y)
     dx, dy = direction(a, b, x, y)
-
+    dictios = copy.deepcopy(setsLists)
     x = x+(dx*10)
     y = y+(dy*10)
     if global_overlaps(sets, setsLists) != True:
@@ -65,12 +61,11 @@ def mouvement(a, b, x, y, sets, setsLists):
             x, y+consts.RADUIS
             )
         if x != b[0] or y != b[1]:
-            #print(1)
             consts.fen.after(30, mouvement(a, b, x, y, sets, setsLists))
     else:
-        #elements.drawlevel(setsLists)
+        #print(dictios)
+        #elements.refreshlevel(dictios)
         return False
-
 
 
 def direction(a, b, x, y):

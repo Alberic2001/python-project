@@ -1,4 +1,4 @@
-import tkinter
+import tkinter, generatornum
 
 RADUIS = 30  # Rayon du losange
 dx, dy = 0, 0

@@ -6,8 +6,8 @@ def number_pawn(listeGene):
 
 def pawn_position():
     positionPion=[]
-    positionPion.append(10*random.randint(20, 80))
-    positionPion.append(10*random.randint(20, 60))
+    positionPion.append(10*random.randint(10, 90))
+    positionPion.append(10*random.randint(10, 70))
     return positionPion
 
 def number_break(pI, pF):
@@ -30,12 +30,12 @@ def two_break(pI, pF):
     L=[]
     c=random.choice(choix)
     if c==1:
-        L.append(10*random.randint(20, 80))
+        L.append(10*random.randint(10, 90))
         L.append(pI[1])
         L1=[L[0], pF[1]]
     else:
         L.append(pI[0])
-        L.append(10*random.randint(20, 60))
+        L.append(10*random.randint(10, 70))
         L1=[pF[0], L[1]]
     
     #L1=one_break(L, pF)
@@ -48,18 +48,18 @@ def three_break(pI, pF):
     L1=[]
     c=random.choice(choix)
     if c==1:
-        L.append(10*random.randint(20, 80))
+        L.append(10*random.randint(10, 90))
         L.append(pI[1])
 
         L1=[L[0]]
-        L1.append(10*random.randint(20, 60))
+        L1.append(10*random.randint(10, 70))
 
         L2=[pF[0],L1[1]]
     else:
         L.append(pI[0])
-        L.append(10*random.randint(20, 60))
+        L.append(10*random.randint(10, 70))
 
-        L1.append(10*random.randint(20, 80))
+        L1.append(10*random.randint(10, 90))
         L1.append(L[1])
 
         L2=[L1[0],pF[1]]
