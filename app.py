@@ -14,7 +14,7 @@ for sets in setsLists:
     elements.create_trajectory(consts.can, sets.get('trajectory'))
     elements.create_nosh(consts.can, sets.get('nosh')[0], sets.get('nosh')[1])
 
-print(solve.solution(setsLists))
+#print(solve.solution(setsLists))
 
 #consts.can.tag_bind(setsLists[index].get('rhomb_id'), consts.BUTTON1, lambda event, arg=setsLists: movement.move_rhomb(event, arg))
 

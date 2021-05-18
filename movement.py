@@ -37,23 +37,23 @@ def move_rhomb(event, setsLists):
 
 
 def move(sets, setsLists):
+    dictios = copy.deepcopy(setsLists)
     trajectory = getTrajectory(sets)  # ====liste des trajectoires
     for i in range(0, len(trajectory)-1):  # on parcourt les trajectoires possible
         dx,dy=0,0
         x, y = trajectory[i]
         #print(sets.get('rhomb'), x,y)
-        mouvement(trajectory[i], trajectory[i+1], x, y, sets, setsLists)
-        
+        mouvement(trajectory[i], trajectory[i+1], x, y, sets, setsLists, dictios)
 
-def mouvement(a, b, x, y, sets, setsLists):
+
+
+def mouvement(a, b, x, y, sets, setsLists, dictios):
     global dx, dy
     dx, dy = direction(a, b, x, y)
-    dictios = copy.deepcopy(setsLists)
     x = x+(dx*10)
     y = y+(dy*10)
     if global_overlaps(sets, setsLists) != True:
         sets.update({'rhomb': [x, y]})
-        print(sets)
         consts.can.coords(sets.get('rhomb_id'),
             x-consts.RADUIS, y,
             x, y-consts.RADUIS,
@@ -61,7 +61,7 @@ def mouvement(a, b, x, y, sets, setsLists):
             x, y+consts.RADUIS
             )
         if x != b[0] or y != b[1]:
-            consts.fen.after(30, mouvement(a, b, x, y, sets, setsLists))
+            consts.fen.after(30, mouvement(a, b, x, y, sets, setsLists, dictios))
     else:
         #print(dictios)
         #elements.refreshlevel(dictios)
