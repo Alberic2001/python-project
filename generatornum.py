@@ -88,7 +88,7 @@ def generator(a):
         positionPion=pawn_position()
         positionEncoche=pawn_position()
         trajectoire=create_trajectory(positionPion, positionEncoche)
-        print (positionPion,positionEncoche,trajectoire)
+        print(positionPion,positionEncoche,trajectoire)
         eleDico= elements.elementsDictionnary(positionPion, trajectoire, positionEncoche, elements.create_rhomb(consts.can, positionPion[0], positionPion[1], consts.RADUIS))
         listPart.append(eleDico)
     return listPart

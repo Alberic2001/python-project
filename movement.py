@@ -1,4 +1,4 @@
-import tkinter, consts, elements, copy
+import tkinter, consts, elements, copy, play, time
 
 def getTrajectory(sets):
     return sets.get("trajectory")
@@ -34,7 +34,10 @@ def move_rhomb(event, setsLists):
         if sets.get('rhomb_id') == event.widget.find_withtag("current")[0]:
             move(sets, level)
             break
-
+    #print("setslist = ", setsLists)
+    # if play.levelCompleted(setsLists) == True:
+    #     time.sleep(2)
+    #     play.switch(event, consts.levelsLists)
 
 def move(sets, setsLists):
     dictios = copy.deepcopy(setsLists)
@@ -43,12 +46,18 @@ def move(sets, setsLists):
         dx,dy=0,0
         x, y = trajectory[i]
         #print(sets.get('rhomb'), x,y)
-        mouvement(trajectory[i], trajectory[i+1], x, y, sets, setsLists, dictios)
+        consts.fen.after(30, mouvement,trajectory[i], trajectory[i+1], x, y, sets, setsLists, dictios)
+        #sets.update({'rhomb': [x, y]})
+    
+    # if play.levelCompleted(setsLists) == True:
+    #     time.sleep(2)
+    #     play.switch(consts.levelsLists)
 
 
 
 def mouvement(a, b, x, y, sets, setsLists, dictios):
     global dx, dy
+    print(sets)
     dx, dy = direction(a, b, x, y)
     x = x+(dx*10)
     y = y+(dy*10)
@@ -64,7 +73,7 @@ def mouvement(a, b, x, y, sets, setsLists, dictios):
             consts.fen.after(30, mouvement(a, b, x, y, sets, setsLists, dictios))
     else:
         #print(dictios)
-        #elements.refreshlevel(dictios)
+        elements.refreshlevel(dictios)
         return False
 
 
